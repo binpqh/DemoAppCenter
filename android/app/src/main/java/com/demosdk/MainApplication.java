@@ -16,6 +16,7 @@ import com.microsoft.codepush.react.CodePush;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
+
   private final ReactNativeHost mReactNativeHost = new DefaultReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
@@ -60,7 +61,7 @@ public class MainApplication extends Application implements ReactApplication {
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;
   }
-  
+
   @Override
   public void onCreate() {
     super.onCreate();
