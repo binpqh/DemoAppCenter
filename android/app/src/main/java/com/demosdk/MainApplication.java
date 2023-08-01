@@ -11,6 +11,8 @@ import com.facebook.soloader.SoLoader;
 import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
 import com.microsoft.appcenter.reactnative.analytics.AppCenterReactNativeAnalyticsPackage;
 import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
+import com.microsoft.codepush.react.CodePush;
+
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -30,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
       packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this,
           getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
       packages.add(new AppCenterReactNativePackage(MainApplication.this));
+      packages.add(new CodePush("deployment-key-here", MainApplication.this, BuildConfig.DEBUG));
       return packages;
     }
 
@@ -53,6 +56,12 @@ public class MainApplication extends Application implements ReactApplication {
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;
   }
+
+  @Override
+  public String getJSBundleFile() {
+    return CodePush.getJSBundleFile();
+  }
+
   @Override
   public void onCreate() {
     super.onCreate();
