@@ -11,6 +11,8 @@ import {
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 import {NativeModules} from 'react-native';
 import CustomButton from './components/Button';
+import codePush from 'react-native-code-push';
+import CodePush from 'react-native-code-push';
 
 const {DeviceModule} = NativeModules;
 const commodityList: Array<{
@@ -35,9 +37,18 @@ const receiptNumber = 'unknown';
 const vendorId = 4070;
 const productId = 33054;
 const language = 'vi';
+let codePushOptions = {checkFrequency: codePush.CheckFrequency.MANUAL};
+
 const App = () => {
   const [result, setResult] = useState<any>();
   useEffect(() => {
+    codePush.sync({
+      updateDialog: {
+        appendReleaseDescription: true,
+        title: 'a new update is available!',
+      },
+      installMode: codePush.InstallMode.IMMEDIATE,
+    });
     DeviceModule.initSimDispenser();
   }, []);
   const handleGetStatus = () => {
@@ -139,4 +150,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default CodePush(codePushOptions)(App);
