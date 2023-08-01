@@ -57,10 +57,10 @@ public class MainApplication extends Application implements ReactApplication {
     return mReactNativeHost;
   }
 
-  @Override
-  public String getJSBundleFile() {
-    return CodePush.getJSBundleFile();
-  }
+//  @Override
+//  public String getJSBundleFile() {
+//    return CodePush.getJSBundleFile();
+//  }
 
   @Override
   public void onCreate() {
