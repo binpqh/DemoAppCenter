@@ -73,7 +73,10 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
     namespace "com.demosdk"
     defaultConfig {
         applicationId "com.demosdk"
@@ -114,7 +117,6 @@ android {
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
-
     implementation("com.facebook.react:react-android")
     implementation fileTree(include: ['*.aar', '*.jar'], dir: 'libs')
     implementation project(':appcenter-crashes')
