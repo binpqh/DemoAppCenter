@@ -1,6 +1,6 @@
 rootProject.name = 'DemoSDK'
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 includeBuild('../node_modules/@react-native/gradle-plugin')
 include ':appcenter-crashes'
 project(':appcenter-crashes').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-crashes/android')
