@@ -17,6 +17,7 @@
     "react": "18.2.0",
     "react-native": "0.72.2",
     "react-native-code-push": "^7.0.2",
+    "react-native-gradle-plugin": "^0.71.19",
     "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
