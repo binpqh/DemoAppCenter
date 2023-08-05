@@ -1,25 +1,28 @@
 package com.demosdk;
-import android.app.PendingIntent;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 import asim.sdk.common.Utils;
 import asim.sdk.locker.CustomProber;
 import asim.sdk.locker.DeviceInfo;
-import asim.sdk.locker.SDKLocker;
 import asim.sdk.printer.POSCustomed;
 import asim.sdk.printer.SDKPrints;
 import asim.sdk.sdksimdispenser.SimdispenserMain;
-import com.facebook.react.bridge.*;
+import asim.sdk.tempandhum.SDKTemperatureAndHumidity;
+import asim.sdk.tempandhum.TempHumiData;
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.lvrenyang.io.USBPrinting;
 import org.jetbrains.annotations.NotNull;
-import asim.sdk.tempandhum.SDKTemperatureAndHumidity;
-import asim.sdk.tempandhum.TempHumiData;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -43,6 +46,19 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return "DeviceModule";
+    }
+    @ReactMethod
+    public void install(String path) {
+        String cmd = "chmod 777 " + path;
+        try {
+            Runtime.getRuntime().exec(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");
+        context.startActivity(intent);
     }
     @ReactMethod
     public void rebootDevice() {

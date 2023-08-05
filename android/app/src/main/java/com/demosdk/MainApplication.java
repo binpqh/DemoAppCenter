@@ -7,11 +7,9 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
+import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
-import com.microsoft.appcenter.reactnative.analytics.AppCenterReactNativeAnalyticsPackage;
-import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
-import com.microsoft.codepush.react.CodePush;
+import com.rnfs.RNFSPackage;
 
 import java.util.List;
 
@@ -26,14 +24,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      // below MyAppPackage is added to the list of packages returned
       packages.add(new MyAppPackage());
-      packages.add(new AppCenterReactNativeCrashesPackage(MainApplication.this,
-          getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)));
-      packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this,
-          getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
-      packages.add(new AppCenterReactNativePackage(MainApplication.this));
-      packages.add(new CodePush("deployment-key-here", MainApplication.this, BuildConfig.DEBUG));
+//      packages.add(new RNFSPackage());
       return packages;
     }
 
@@ -50,10 +42,6 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected Boolean isHermesEnabled() {
       return BuildConfig.IS_HERMES_ENABLED;
-    }
-    @Override
-    protected String getJSBundleFile() {
-      return CodePush.getJSBundleFile();
     }
   };
 

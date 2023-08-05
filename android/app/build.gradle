@@ -1,8 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle";
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -10,13 +7,13 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
-//     root = file("../")
+    // root = file("../../")
     //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
-//     reactNativeDir = file("../node_modules/react-native")
+    // reactNativeDir = file("../../node_modules/react-native")
     //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
-//     codegenDir = file("../node_modules/@react-native/codegen")
+    // codegenDir = file("../../node_modules/@react-native/codegen")
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
-//     cliFile = file("../node_modules/react-native/cli.js")
+    // cliFile = file("../../node_modules/react-native/cli.js")
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
@@ -73,10 +70,6 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
     namespace "com.demosdk"
     defaultConfig {
         applicationId "com.demosdk"
@@ -116,13 +109,10 @@ android {
 }
 
 dependencies {
-    // The version of react-native is set by the React Native Gradle Pluginư
-    implementation "com.facebook.react:react-native:0.65.1"
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-native")
     implementation("com.facebook.react:react-android")
     implementation fileTree(include: ['*.aar', '*.jar'], dir: 'libs')
-    implementation project(':appcenter-crashes')
-    implementation project(':appcenter-analytics')
-    implementation project(':appcenter')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -135,4 +125,4 @@ dependencies {
         implementation jscFlavor
     }
 }
-
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

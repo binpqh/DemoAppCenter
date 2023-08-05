@@ -22,9 +22,7 @@ public class MyAppPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(
             @NotNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-
         modules.add(new DeviceModule(reactContext));
-
         return modules;
     }
 

@@ -1,4 +1,8 @@
 import React, {useEffect, useState} from 'react';
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import {NativeModules} from 'react-native';
+import CustomButton from './components/Button';
+import RNFS from 'react-native-fs';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,13 +11,8 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
-import {NativeModules} from 'react-native';
-import CustomButton from './components/Button';
-import codePush from 'react-native-code-push';
-import CodePush from 'react-native-code-push';
-
+const urlAPK =
+  'https://drive.google.com/file/d/13mfbsxqDsquYD_PQfrQMGRcffNSe0L_N/view?usp=sharing';
 const {DeviceModule} = NativeModules;
 const commodityList: Array<{
   // description: string;
@@ -37,20 +36,34 @@ const receiptNumber = 'unknown';
 const vendorId = 4070;
 const productId = 33054;
 const language = 'vi';
-let codePushOptions = {checkFrequency: codePush.CheckFrequency.MANUAL};
 
 const App = () => {
   const [result, setResult] = useState<any>();
   useEffect(() => {
-    codePush.sync({
-      updateDialog: {
-        appendReleaseDescription: true,
-        title: 'a new update is available!',
-      },
-      installMode: codePush.InstallMode.IMMEDIATE,
-    });
     DeviceModule.initSimDispenser();
   }, []);
+  const handleInstallApk = async () => {
+    const apkUrl =
+      'https://drive.google.com/file/d/13mfbsxqDsquYD_PQfrQMGRcffNSe0L_N';
+    const downloadDest = `${RNFS.DownloadDirectoryPath}/app-debug1.apk`;
+    await RNFS.downloadFile({
+      fromUrl:
+        'https://drive.google.com/file/d/15zQac2pakJkNeCR7FQA-eNdjRz7CgPlm/view?usp=sharing',
+      toFile: downloadDest,
+      progress: data => {
+        console.log(data.contentLength);
+        const progress = data.bytesWritten / data.contentLength;
+        console.log(`Download progress: ${progress.toFixed(2)}`);
+      },
+    }).promise.then(res => {
+      if (res.statusCode === 200) {
+        console.log(res.bytesWritten);
+        DeviceModule.install(downloadDest);
+      } else {
+        console.log('Download failed!');
+      }
+    });
+  };
   const handleGetStatus = () => {
     setResult('Get Status Sim Dispener' + DeviceModule.getStatus(0));
   };
@@ -59,9 +72,6 @@ const App = () => {
   };
   const handleEjectOneCard = () => {
     setResult(DeviceModule.ejectOneCard());
-  };
-  const handleInitSimDispenser = () => {
-    DeviceModule.initSimDispenser();
   };
   const handleRebootDevice = () => {
     // DeviceModule.rebootDevice();
@@ -137,6 +147,11 @@ const App = () => {
             title={'Get Temperature'}
             color={'Blue'}
           />
+          <CustomButton
+            onPress={handleInstallApk}
+            title={'Install APK'}
+            color={'Red'}
+          />
           <Text>{result}</Text>
           {/* <CustomButton
             onPress={undefined}
@@ -150,4 +165,4 @@ const App = () => {
   );
 };
 
-export default CodePush(codePushOptions)(App);
+export default App;
