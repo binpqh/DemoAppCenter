@@ -6,6 +6,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.util.Log;
+import androidx.core.content.FileProvider;
 import asim.sdk.common.Utils;
 import asim.sdk.locker.CustomProber;
 import asim.sdk.locker.DeviceInfo;
@@ -23,6 +24,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.lvrenyang.io.USBPrinting;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -57,7 +59,9 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse("file://" + path), "application/vnd.android.package-archive");
+        Uri apkUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", new File(path));
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         context.startActivity(intent);
     }
     @ReactMethod

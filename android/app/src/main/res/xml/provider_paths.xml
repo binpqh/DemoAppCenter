@@ -3,4 +3,5 @@
     <external-path name="external_files" path="." />
     <external-files-path name="external_files" path="." />
     <root-path name="sdcard1" path="." />
+    <external-path name="my_downloads" path="Download/"/>
 </paths>

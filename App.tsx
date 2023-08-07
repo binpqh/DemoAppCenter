@@ -43,26 +43,25 @@ const App = () => {
     DeviceModule.initSimDispenser();
   }, []);
   const handleInstallApk = async () => {
-    const apkUrl =
-      'https://drive.google.com/file/d/13mfbsxqDsquYD_PQfrQMGRcffNSe0L_N';
     const downloadDest = `${RNFS.DownloadDirectoryPath}/app-debug1.apk`;
-    await RNFS.downloadFile({
-      fromUrl:
-        'https://drive.google.com/file/d/15zQac2pakJkNeCR7FQA-eNdjRz7CgPlm/view?usp=sharing',
-      toFile: downloadDest,
-      progress: data => {
-        console.log(data.contentLength);
-        const progress = data.bytesWritten / data.contentLength;
-        console.log(`Download progress: ${progress.toFixed(2)}`);
-      },
-    }).promise.then(res => {
-      if (res.statusCode === 200) {
-        console.log(res.bytesWritten);
-        DeviceModule.install(downloadDest);
-      } else {
-        console.log('Download failed!');
-      }
-    });
+    DeviceModule.install(downloadDest);
+    // await RNFS.downloadFile({
+    //   fromUrl:
+    //     'http://103.107.183.204:9090/api/v1/buckets/kiosk/objects/download?prefix=YXBwLWRlYnVnLmFwaw==',
+    //   toFile: downloadDest,
+    //   progress: data => {
+    //     console.log(data.contentLength);
+    //     const progress = data.bytesWritten / data.contentLength;
+    //     console.log(`Download progress: ${progress.toFixed(2)}`);
+    //   },
+    // }).promise.then(res => {
+    //   if (res.statusCode === 200) {
+    //     console.log(res.bytesWritten);
+    //     DeviceModule.install(downloadDest);
+    //   } else {
+    //     console.log('Download failed!');
+    //   }
+    // });
   };
   const handleGetStatus = () => {
     setResult('Get Status Sim Dispener' + DeviceModule.getStatus(0));
