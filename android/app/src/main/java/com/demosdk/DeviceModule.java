@@ -7,6 +7,8 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.util.Log;
 import androidx.core.content.FileProvider;
+import asim.sdk.locker.SDKLocker;
+import com.demosdk.UPSModule.SDKUPS;
 import asim.sdk.common.Utils;
 import asim.sdk.locker.CustomProber;
 import asim.sdk.locker.DeviceInfo;
@@ -15,10 +17,9 @@ import asim.sdk.printer.SDKPrints;
 import asim.sdk.sdksimdispenser.SimdispenserMain;
 import asim.sdk.tempandhum.SDKTemperatureAndHumidity;
 import asim.sdk.tempandhum.TempHumiData;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
+import asim.sdk.ups.UPSModel;
+import com.demosdk.UPSModule.SerialPortExample;
+import com.facebook.react.bridge.*;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.lvrenyang.io.USBPrinting;
@@ -50,6 +51,29 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         return "DeviceModule";
     }
     @ReactMethod
+    public void openUPS()
+    {
+        SerialPortExample x = new SerialPortExample();
+        x.open();
+    }
+    @ReactMethod
+    public String getStatusUPS(){
+        Log.d("UPS1","Step 0");
+        SDKUPS sdkups = new SDKUPS("/dev/ttyXR6",2400);
+        Log.d("UPS1","Step 1");
+        UPSModel upsData = null;
+        if (sdkups.connect()) {
+            Log.d("UPS1","Step 2 Connect status"+sdkups.connect());
+            upsData = sdkups.getInfo();
+            upsData.batteryLevel = sdkups.getBatteryLevel();
+        }
+        assert upsData != null;
+        Log.d("BinXiudeptrai","totalInfo :"+upsData.totalInfo+" batteryVoltage :"+upsData.batteryVoltage+" inputVoltage :"+upsData.inputVoltage+" outputVoltage: "+upsData.outputVoltage
+                +" consumedLoad: "+upsData.consumedLoad + " "+upsData.frequencyOutput);
+        return "totalInfo :"+upsData.totalInfo+" batteryVoltage :"+upsData.batteryVoltage+" inputVoltage :"+upsData.inputVoltage+" outputVoltage: "+upsData.outputVoltage
+                +" consumedLoad: "+upsData.consumedLoad + " "+upsData.frequencyOutput;
+    }
+    @ReactMethod
     public void install(String path) {
         String cmd = "chmod 777 " + path;
         try {
@@ -77,7 +101,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public HashMap<String, String> initSimDispenser() {
 //        Log.d("DeviceModule", "initSimDispenser: " + timeToRecyleCard + ", " + comName + ", " + baurate + ", " + idSimDispenser);
-        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyS0", "115200");
+        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR1", "115200");
         return Helper.convertToMapString(initData);
     }
 
@@ -188,8 +212,8 @@ public class DeviceModule extends ReactContextBaseJavaModule {
 
         TempHumiData temphuData = null;
 
-//        List<DeviceInfo> devices = SDKLocker.getAllUsbDevicesHasDriver(context);
-        List<DeviceInfo> devices = getUSBDeviceHasDriver();
+        List<DeviceInfo> devices = SDKLocker.getAllUsbDevicesHasDriver(context);
+//        List<DeviceInfo> devices = getUSBDeviceHasDriver();
         if(devices.size() == 0) {
             Log.d("Huhu","Không có thiết bị nào hết hic");
             return "Không có thiết bị nào có driver hết";
@@ -198,9 +222,12 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         while(maxTry < 5 && temphuData == null) {
             Log.d("Thông báo", " đã vào vòng lặp");
             for (DeviceInfo each : devices) {
-                Log.d("Device Information","Name : "+each.device.getDeviceName()+"Id : "+each.device.getVendorId());
+                boolean connect = tempHuSDK.connect(context, each, temphuBaurate);
+                Log.d("Result SDKTempe connect",String.valueOf(connect));
+                Log.d("Device Information","Name : "+each.device.getDeviceName()+" Id : "+each.device.getVendorId()+" ProductId : "+ each.device.getProductId());
                 if (temphuDeviceId == -1 && each.device.getVendorId() == temphuVendorId && each.device.getProductId() == temphuProductId) {
-                    boolean connect = tempHuSDK.connect(context, each, temphuBaurate);
+
+
                     if (connect) {
                         temphuData = tempHuSDK.getTempHumiData();
                         tempHuSDK.disconnect();
@@ -209,17 +236,20 @@ public class DeviceModule extends ReactContextBaseJavaModule {
                 }
 
                 if (temphuDeviceId != -1 && each.device.getVendorId() == temphuVendorId && each.device.getProductId() == temphuProductId && Utils.compareTwoDeviceId(each.device.getDeviceId(), temphuDeviceId)) {
-                    boolean connect = tempHuSDK.connect(context, each, temphuBaurate);
                     if (connect) {
                         temphuData = tempHuSDK.getTempHumiData();
                     }
                 }
-                result.append("Device : ").append(each.device.getDeviceId()).append("\nTemperature").append(temphuData.temperature).append("\nHumidity").append(temphuData.humidity).append("\nDewdrop").append(temphuData.dewdrop);
-                Log.d("Temperature","Device : "+each.device.getDeviceId()+"\nTemperature" + temphuData.temperature+"\nHumidity" + temphuData.humidity+"\nDewdrop" +temphuData.dewdrop);
+                if(temphuData != null)
+                {
+                    result.append("Device : ").append(each.device.getDeviceId()).append("\nTemperature").append(temphuData.temperature).append("\nHumidity").append(temphuData.humidity).append("\nDewdrop").append(temphuData.dewdrop);
+                    Log.d("Temperature","Device : "+each.device.getDeviceId()+"\nTemperature" + temphuData.temperature+"\nHumidity" + temphuData.humidity+"\nDewdrop" +temphuData.dewdrop);
+                }
             }
             Utils.sleep(1);
             maxTry += 1;
         }
+        Log.d("result tempe",result.toString());
         return result.toString();
     }
     private List<DeviceInfo> getUSBDeviceHasDriver()

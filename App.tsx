@@ -63,6 +63,10 @@ const App = () => {
     //   }
     // });
   };
+  const handleGetStatusUPS = () => {
+    var res = DeviceModule.openUPS();
+    console.log(res);
+  };
   const handleGetStatus = () => {
     setResult('Get Status Sim Dispener' + DeviceModule.getStatus(0));
   };
@@ -92,7 +96,7 @@ const App = () => {
     console.log(result);
   };
   const handleGetTemperature = () => {
-    setResult(DeviceModule.getTemperature());
+    console.log(DeviceModule.getTemperature());
   };
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -149,6 +153,11 @@ const App = () => {
           <CustomButton
             onPress={handleInstallApk}
             title={'Install APK'}
+            color={'Red'}
+          />
+          <CustomButton
+            onPress={handleGetStatusUPS}
+            title={'Get Status UPS'}
             color={'Red'}
           />
           <Text>{result}</Text>
