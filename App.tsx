@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 import {NativeModules} from 'react-native';
 import CustomButton from './components/Button';
-import RNFS from 'react-native-fs';
+// import RNFS from 'react-native-fs';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,25 +11,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-const urlAPK =
-  'https://drive.google.com/file/d/13mfbsxqDsquYD_PQfrQMGRcffNSe0L_N/view?usp=sharing';
 const {DeviceModule} = NativeModules;
-const commodityList: Array<{
-  // description: string;
-  quantity: string;
-  price: string;
-}> = [
-  {
-    // description: 'Sim description',
-    quantity: '50',
-    price: '500,000VND',
-  },
-];
-const total: {price: string; quantity: string; serials: string} = {
-  price: '250,000VND',
-  quantity: '5',
-  serials: '1232131231233123213123', // khong su dung (de giai doan 2)
-};
 const kioskId = '1';
 const deviceId = 1005;
 const receiptNumber = 'unknown';
@@ -43,8 +25,8 @@ const App = () => {
     DeviceModule.initSimDispenser();
   }, []);
   const handleInstallApk = async () => {
-    const downloadDest = `${RNFS.DownloadDirectoryPath}/app-debug1.apk`;
-    DeviceModule.install(downloadDest);
+    // const downloadDest = `${RNFS.DownloadDirectoryPath}/app-debug1.apk`;
+    // DeviceModule.install(downloadDest);
     // await RNFS.downloadFile({
     //   fromUrl:
     //     'http://103.107.183.204:9090/api/v1/buckets/kiosk/objects/download?prefix=YXBwLWRlYnVnLmFwaw==',
@@ -72,6 +54,15 @@ const App = () => {
   };
   const handleMoveCardToCheckBox = () => {
     DeviceModule.moveCardToBoxCheck(0);
+  };
+  const handleReadSerialSim = () => {
+    DeviceModule.readSerialSim(0, (res: any, err: any) => {
+      if (res != null) {
+        console.log(res);
+      } else {
+        console.log(err);
+      }
+    });
   };
   const handleEjectOneCard = () => {
     setResult(DeviceModule.ejectOneCard());
@@ -158,6 +149,11 @@ const App = () => {
           <CustomButton
             onPress={handleGetStatusUPS}
             title={'Get Status UPS'}
+            color={'Red'}
+          />
+          <CustomButton
+            onPress={handleReadSerialSim}
+            title={'Read Serial Sim'}
             color={'Red'}
           />
           <Text>{result}</Text>

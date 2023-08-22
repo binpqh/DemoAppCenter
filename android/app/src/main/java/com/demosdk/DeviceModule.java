@@ -99,10 +99,10 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         }
     }
     @ReactMethod
-    public HashMap<String, String> initSimDispenser() {
+    public String initSimDispenser() {
 //        Log.d("DeviceModule", "initSimDispenser: " + timeToRecyleCard + ", " + comName + ", " + baurate + ", " + idSimDispenser);
         HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR1", "115200");
-        return Helper.convertToMapString(initData);
+        return Helper.convertToJsonString(initData);
     }
 
     @ReactMethod
@@ -110,14 +110,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         Log.d("DeviceModule", "getStatus: " + idSimDispenser);
 
         HashMap<String, Object> getStatusResult = listSimDispenserMain.get(idSimDispenser).m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
-        var x =  Helper.convertToMapString(getStatusResult);
-        List<String> valuesList = new ArrayList<>(x.values());
-        String a = "";
-        for (var item: valuesList
-             ) {
-            a += item;
-        }
-        return a;
+        return Helper.convertToJsonString(getStatusResult);
     }
 
     @ReactMethod
@@ -128,12 +121,13 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void readSeriSim(int idSimDispenser, Callback callback) {
+    public void readSerialSim(int idSimDispenser, Callback callback) {
         Log.d("DeviceModule", "readSeriSim: " + idSimDispenser);
 
         HashMap<String, Object> readSeriSimResult = listSimDispenserMain.get(idSimDispenser).m_control.controlReadICCIDSim(listSimDispenserMain.get(idSimDispenser));
         if (readSeriSimResult != null) {
-            callback.invoke(null, Helper.convertToMapString(readSeriSimResult));
+            Log.d("Result Read SerialSim" ,String.valueOf(Helper.convertToJsonString(readSeriSimResult)));
+            callback.invoke(null, Helper.convertToJsonString(readSeriSimResult));
         } else {
             callback.invoke("Read seri Sim not available.", null);
         }

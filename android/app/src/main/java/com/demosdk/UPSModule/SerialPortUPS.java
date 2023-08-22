@@ -1,16 +1,12 @@
 package com.demosdk.UPSModule;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import android.util.Log;
+
+import java.io.*;
 
 public class SerialPortUPS {
     private static final String TAG = "SerialPort";
-    private File mDevice;
-    private int mBaudrate;
-    private int mFlags;
+    private FileDescriptor mFd;
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
 
@@ -29,13 +25,14 @@ public class SerialPortUPS {
             }
         }
 
-        this.mDevice = device;
-        this.mBaudrate = baudrate;
-        this.mFlags = flags;
-
-        // Open the input and output streams
-        this.mFileInputStream = new FileInputStream(device);
-        this.mFileOutputStream = new FileOutputStream(device);
+        this.mFd = open(device.getAbsolutePath(), baudrate, flags);
+        if (this.mFd == null) {
+            Log.e("SerialPort", "native open returns null");
+            throw new IOException();
+        } else {
+            this.mFileInputStream = new FileInputStream(this.mFd);
+            this.mFileOutputStream = new FileOutputStream(this.mFd);
+        }
     }
 
     public InputStream getInputStream() {
@@ -46,13 +43,12 @@ public class SerialPortUPS {
         return this.mFileOutputStream;
     }
 
-    public void close() {
-        try {
-            mFileInputStream.close();
-            mFileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static native FileDescriptor open(String var0, int var1, int var2);
+
+    public native void close();
+
+    static {
+        System.loadLibrary("serial_port");
     }
 }
 
