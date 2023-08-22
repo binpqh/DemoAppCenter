@@ -77,7 +77,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public HashMap<String, String> initSimDispenser() {
 //        Log.d("DeviceModule", "initSimDispenser: " + timeToRecyleCard + ", " + comName + ", " + baurate + ", " + idSimDispenser);
-        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyS0", "115200");
+        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR1", "115200");
         return Helper.convertToMapString(initData);
     }
 
@@ -86,6 +86,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         Log.d("DeviceModule", "getStatus: " + idSimDispenser);
 
         HashMap<String, Object> getStatusResult = listSimDispenserMain.get(idSimDispenser).m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
+        Log.d("status",getStatusResult.toString());
         var x =  Helper.convertToMapString(getStatusResult);
         List<String> valuesList = new ArrayList<>(x.values());
         String a = "";
