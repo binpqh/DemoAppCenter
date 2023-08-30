@@ -64,7 +64,6 @@ const App = () => {
       }
     });
   };
-  
   const handleEjectOneCard = () => {
     setResult(DeviceModule.ejectOneCard());
   };
