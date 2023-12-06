@@ -101,7 +101,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public String initSimDispenser() {
 //        Log.d("DeviceModule", "initSimDispenser: " + timeToRecyleCard + ", " + comName + ", " + baurate + ", " + idSimDispenser);
-        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR1", "115200");
+        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR", "115200");
         return Helper.convertToJsonString(initData);
     }
 
