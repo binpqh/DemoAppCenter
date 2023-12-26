@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-const {DeviceModule,Despenser,Printer} = NativeModules;
+const {DeviceModule,Despenser,Printer,DevicePeripherals} = NativeModules;
 const App = () => {
   const [result, setResult] = useState<any>();
   useEffect(() => {
@@ -32,20 +32,20 @@ const fakeData = {
 };
 
 //testing for printer
-const handleTest = async ()=> {
- const statusprint = await Printer.PrinterBill(
-    fakeData.kioskId,
-    fakeData.receiptNumber,
-    fakeData.language,
-    fakeData.hotline,
-    fakeData.email,
-    fakeData.total,
-    fakeData.commodityList
-  );
-  console.log("status after printer : ",statusprint);
-  const status = await Printer.StatusOutOfPaper();
-  console.log("status warning : ",status);
-};
+// const handleTest = async ()=> {
+//  const statusprint = await Printer.PrinterBill(
+//     fakeData.kioskId,
+//     fakeData.receiptNumber,
+//     fakeData.language,
+//     fakeData.hotline,
+//     fakeData.email,
+//     fakeData.total,
+//     fakeData.commodityList
+//   );
+//   console.log("status after printer : ",statusprint);
+//   const status = await Printer.StatusOutOfPaper();
+//   console.log("status warning : ",status);
+// };
 
 
   // const handleGetStatus = () => {
@@ -110,7 +110,10 @@ const handleTest = async ()=> {
 //       const status = await Despenser.outCard(1);
 //       console.log("status SIM : ",status);
 //   };
-
+const handleTest = async ()=> {
+  const tem = await DevicePeripherals.getTemperature();
+  console.log("nhiet do : ",tem);
+}
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

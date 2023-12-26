@@ -1,5 +1,6 @@
 package com.demosdk;
 import com.demosdk.DeviceModule.Despenser;
+import com.demosdk.DeviceModule.DevicePeripherals;
 import com.demosdk.DeviceModule.Printer;
 import com.demosdk.Test.DeviceModule;
 import com.facebook.react.ReactPackage;
@@ -28,6 +29,7 @@ public class MyAppPackage implements ReactPackage {
         modules.add(new DeviceModule(reactContext));
         modules.add(new Despenser(reactContext));
         modules.add(new Printer(reactContext));
+        modules.add(new DevicePeripherals(reactContext));
         return modules;
     }
 

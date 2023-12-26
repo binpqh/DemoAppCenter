@@ -1,6 +1,9 @@
 package com.demosdk;
 
+import android.content.Context;
 import android.util.Log;
+import asim.sdk.locker.DeviceInfo;
+import asim.sdk.locker.SDKLocker;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -42,5 +45,8 @@ public class Helper {
         }
         return resultList;
     }
-
+    public static List<DeviceInfo> getPortDevice(Context context , int VendorId , int ProductId , int DeviceId){
+        SDKLocker locker = new SDKLocker();
+        return locker.getAllUsbDeviceHasDriverByVendorIdProductIdAndDeviceId(context,VendorId,ProductId,DeviceId);
+    }
 }

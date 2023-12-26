@@ -274,6 +274,33 @@ public class DeviceModule extends ReactContextBaseJavaModule {
        promise.resolve(status);
     }
     @ReactMethod
+    public void Testing(){
+            SDKLocker locker = new SDKLocker();
+        List<DeviceInfo> listItems =  locker.getAllUsbDeviceHasDriverByVendorIdProductIdAndDeviceId(context,6790,29987,1009);
+
+        SDKTemperatureAndHumidity tempHuSDK = new SDKTemperatureAndHumidity();
+        boolean status = tempHuSDK.connect(context,1009,listItems.get(0).port,9600);
+        Log.d("status log connect ", " "+status);
+        if(status){
+            TempHumiData tem = tempHuSDK.getTempHumiData();
+            Log.d("nhiet do la  ", " "+tem.temperature);
+        }
+
+    }
+    public void Testinglocker(){
+        SDKLocker locker = new SDKLocker();
+        List<DeviceInfo> listItems =  locker.getAllUsbDeviceHasDriverByVendorIdProductIdAndDeviceId(context,6790,29987,1);
+
+        SDKTemperatureAndHumidity tempHuSDK = new SDKTemperatureAndHumidity();
+        boolean status = tempHuSDK.connect(context,1009,listItems.get(0).port,9600);
+        Log.d("status log connect ", " "+status);
+        if(status){
+            TempHumiData tem = tempHuSDK.getTempHumiData();
+            Log.d("nhiet do la  ", " "+tem.temperature);
+        }
+
+    }
+    @ReactMethod
     public String getTemperature()
     {
         StringBuilder result = new StringBuilder();
