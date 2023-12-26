@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 import {NativeModules} from 'react-native';
 import CustomButton from './components/Button';
-// import RNFS from 'react-native-fs';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,90 +10,112 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-const {DeviceModule} = NativeModules;
-const kioskId = '1';
-const deviceId = 1005;
-const receiptNumber = 'unknown';
-const vendorId = 4070;
-const productId = 33054;
-const language = 'vi';
-
+const {DeviceModule,Despenser,Printer} = NativeModules;
 const App = () => {
   const [result, setResult] = useState<any>();
   useEffect(() => {
-    DeviceModule.initSimDispenser();
   }, []);
-  const handleInstallApk = async () => {
-    // const downloadDest = `${RNFS.DownloadDirectoryPath}/app-debug1.apk`;
-    // DeviceModule.install(downloadDest);
-    // await RNFS.downloadFile({
-    //   fromUrl:
-    //     'http://103.107.183.204:9090/api/v1/buckets/kiosk/objects/download?prefix=YXBwLWRlYnVnLmFwaw==',
-    //   toFile: downloadDest,
-    //   progress: data => {
-    //     console.log(data.contentLength);
-    //     const progress = data.bytesWritten / data.contentLength;
-    //     console.log(`Download progress: ${progress.toFixed(2)}`);
-    //   },
-    // }).promise.then(res => {
-    //   if (res.statusCode === 200) {
-    //     console.log(res.bytesWritten);
-    //     DeviceModule.install(downloadDest);
-    //   } else {
-    //     console.log('Download failed!');
-    //   }
-    // });
-  };
-  const handleGetStatusUPS = () => {
-    var res = DeviceModule.openUPS();
-    console.log(res);
-  };
-  const handleGetStatus = () => {
-    setResult('Get Status Sim Dispener' + DeviceModule.getStatus(0));
-  };
-  const handleMoveCardToCheckBox = () => {
-    DeviceModule.moveCardToBoxCheck(0);
-  };
-  const handleReadSerialSim = () => {
-    DeviceModule.readSerialSim(0, (res: any, err: any) => {
-      if (res != null) {
-        console.log(res);
-      } else {
-        console.log(err);
-      }
-    });
-  };
-  const handleEjectOneCard = () => {
-    setResult(DeviceModule.ejectOneCard());
-  };
-  const handleRebootDevice = () => {
-    // DeviceModule.rebootDevice();
-  };
-  const handleMoveCardFront = () => {
-    DeviceModule.moveToFront(0);
-  };
-  const handlePrintReceipt = () => {
-    setResult(
-      DeviceModule.printReceipt(
-        kioskId,
-        deviceId,
-        vendorId,
-        productId,
-        receiptNumber,
-        language,
-      ),
-    );
-    console.log(result);
-  };
-  const handleGetTemperature = () => {
-    console.log(DeviceModule.getTemperature());
-  };
+const fakeData = {
+  kioskId: "yourKioskId",
+  receiptNumber: "123456",
+  language: "en",
+  hotline: "03821808722",
+  email: "cskh@myLocal.vn.com",
+  total: {
+    quantity: "12",
+    price: "1.000.000",
+  },
+  commodityList: [
+    { description: "Sim 1", quantity: "5", price: "500,000" },
+    { description: "Sim 2", quantity: "7", price: "300,000" },
+  ],
+};
+
+//testing for printer
+const handleTest = async ()=> {
+ const statusprint = await Printer.PrinterBill(
+    fakeData.kioskId,
+    fakeData.receiptNumber,
+    fakeData.language,
+    fakeData.hotline,
+    fakeData.email,
+    fakeData.total,
+    fakeData.commodityList
+  );
+  console.log("status after printer : ",statusprint);
+  const status = await Printer.StatusOutOfPaper();
+  console.log("status warning : ",status);
+};
+
+
+  // const handleGetStatus = () => {
+  //   setResult('Get Status Sim Dispener' + DeviceModule.getStatus(1));
+  //   DeviceModule.getStatusBoxCard(1);
+  // };
+  // const handleMoveCardToCheckBox = () => {
+  //   DeviceModule.moveCardToBoxCheck(0);
+  // };
+  // const handleReadSerialSim = () => {
+  //   DeviceModule.readSerialSim(0, (res: any, err: any) => {
+  //     if (res != null) {
+  //       console.log(res);
+  //     } else {
+  //       console.log(err);
+  //     }
+  //   });
+  // };
+  // const handleEjectOneCard = () => {
+  //   DeviceModule.Printest();
+  // };
+  // const handleRebootDevice = () => {
+  //   // DeviceModule.rebootDevice();
+  // };
+  // const handleMoveCardFront = () => {
+  //   DeviceModule.moveToFront(0);
+  // };
+  // const handleMoveOneCard = () => {
+  //   DeviceModule.moveOneCard(1);
+  // };
+  // const  handleInit = () => {
+  //  var test = DeviceModule.InitDispenser(1,"/dev/ttyS0");
+    
+  //  console.log(test);
+  // };
+  // const handleMovecard = () => {
+  //   DeviceModule.moveCardToRead(1);
+  // };
+  
+  // const handTestBtn = () => {
+  //   DeviceModule.getUSBDeviceHasDriver(0);
+  // };
+  // const handlePrintReceipt = () => {
+  //   setResult(
+  //     DeviceModule.printReceipt(
+  //       kioskId,
+  //       deviceId,
+  //       vendorId,
+  //       productId,
+  //       receiptNumber,
+  //       language,
+  //     ),
+  //   );
+  //   console.log(result);
+  // };
+  // const handleGetTemperature = () => {
+  //   console.log(DeviceModule.TemperatureConnect(0));
+  // };
+// //testing for despenser
+//   const handleTest = async ()=> {
+//       //const status = await Despenser.initDespenser(1,"/dev/ttyS0");
+//       const status = await Despenser.outCard(1);
+//       console.log("status SIM : ",status);
+//   };
 
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+      backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    };
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -111,58 +132,11 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <CustomButton
-            onPress={handleGetStatus}
-            title={'Get Status'}
-            color={'Blue'}
-          />
-          <CustomButton
-            onPress={handlePrintReceipt}
-            title={'Print Receipt'}
-            color={'Blue'}
+            onPress={handleTest}
+            title={'Testing Function'}
+            color={'Red'}
           />
 
-          <CustomButton
-            onPress={handleMoveCardToCheckBox}
-            title={'Move Card'}
-            color={'Blue'}
-          />
-          <CustomButton
-            onPress={handleEjectOneCard}
-            title={'Eject Card'}
-            color={'Blue'}
-          />
-          <CustomButton
-            onPress={handleMoveCardFront}
-            title={'Out Card'}
-            color={'Blue'}
-          />
-          <CustomButton
-            onPress={handleGetTemperature}
-            title={'Get Temperature'}
-            color={'Blue'}
-          />
-          <CustomButton
-            onPress={handleInstallApk}
-            title={'Install APK'}
-            color={'Red'}
-          />
-          <CustomButton
-            onPress={handleGetStatusUPS}
-            title={'Get Status UPS'}
-            color={'Red'}
-          />
-          <CustomButton
-            onPress={handleReadSerialSim}
-            title={'Read Serial Sim'}
-            color={'Red'}
-          />
-          <Text>{result}</Text>
-          {/* <CustomButton
-            onPress={undefined}
-            title={'Read Series Sim'}
-            color={'Blue'}
-          /> */}
-          {/* <LearnMoreLinks /> */}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-package com.demosdk;
+package com.demosdk.Test;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.util.Log;
 import androidx.core.content.FileProvider;
 import asim.sdk.locker.SDKLocker;
+import com.demosdk.DefineState;
+import com.demosdk.Helper;
+import com.demosdk.Services.PrinterService;
 import com.demosdk.UPSModule.SDKUPS;
 import asim.sdk.common.Utils;
 import asim.sdk.locker.CustomProber;
@@ -30,21 +33,28 @@ import java.io.IOException;
 import java.util.*;
 
 public class DeviceModule extends ReactContextBaseJavaModule {
-
+    private static final String timetoRecyceCard = "60000";
+    private static final String baurate = "115200";
     private static final String SIM_DISPENSER_SDK_CHANNEL = "SDKSimDispenser";
     private static final String EVENT_STATUS_CHANGED = "statusChanged";
     private static List<SimdispenserMain> listSimDispenserMain;
     private final Context context;
-    private static int temphuProductId = 0;
-    private static int temphuVendorId = 0;
-    private static int temphuDeviceId = 0;
-    private static int temphuBaurate = 9600;
+    private static final int temphuProductId = 0;
+    private static final int temphuVendorId = 0;
+    private static final int temphuDeviceId = 0;
+    private static final int temphuBaurate = 9600;
+    SimdispenserMain[] listDispenser = new SimdispenserMain[4];
+    //private boolean statusDispenser ;
     public DeviceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.context = reactContext.getApplicationContext();
-        listSimDispenserMain = Arrays.asList(new SimdispenserMain(), new SimdispenserMain(), new SimdispenserMain(), new SimdispenserMain());
-    }
+        listSimDispenserMain = Arrays.asList(new SimdispenserMain(),new SimdispenserMain() , new SimdispenserMain(), new SimdispenserMain());
 
+    }
+    public HashMap<String, Object> GetAllsStatusBox(int idSimDispenser)
+    {
+        return SimdispenserMain.m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
+    }
     @NotNull
     @Override
     public String getName() {
@@ -56,6 +66,17 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         SerialPortExample x = new SerialPortExample();
         x.open();
     }
+
+    
+    @ReactMethod()
+    public boolean InitDispenser(int locationDespencer , String port ){
+
+        HashMap<String,Object> status = listSimDispenserMain.get(locationDespencer).Init(timetoRecyceCard,port,baurate);
+        return (boolean) status.get("status");
+    }
+
+
+
     @ReactMethod
     public String getStatusUPS(){
         Log.d("UPS1","Step 0");
@@ -101,7 +122,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public String initSimDispenser() {
 //        Log.d("DeviceModule", "initSimDispenser: " + timeToRecyleCard + ", " + comName + ", " + baurate + ", " + idSimDispenser);
-        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyXR", "115200");
+        HashMap<String, Object> initData = listSimDispenserMain.get(1).Init("60000", "/dev/ttyS0", "115200");
         return Helper.convertToJsonString(initData);
     }
 
@@ -109,24 +130,36 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     public String getStatus(int idSimDispenser) {
         Log.d("DeviceModule", "getStatus: " + idSimDispenser);
 
-        HashMap<String, Object> getStatusResult = listSimDispenserMain.get(idSimDispenser).m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
+        HashMap<String, Object> getStatusResult = SimdispenserMain.m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
+        Log.d("status sim : ",Helper.convertToJsonString(getStatusResult));
         return Helper.convertToJsonString(getStatusResult);
-    }
 
+    }
+   @ReactMethod
+    public boolean getStatusBoxCard(int idSimDispenser){
+        HashMap<String, Object> getStatusResult = SimdispenserMain.m_control.controlCheckSensorStatus(listSimDispenserMain.get(idSimDispenser));
+       return getStatusResult.get("sensor7") == "have card";
+   }
+   @ReactMethod
+    public boolean getStatusReadIdArea(int idSimDispenser)
+   {
+        HashMap<String,Object> allStatus = GetAllsStatusBox(idSimDispenser);
+        return allStatus.get("sensor") == "have card";
+   }
     @ReactMethod
     public boolean moveCardToBoxCheck(int idSimDispenser) {
         Log.d("DeviceModule", "moveCardToBoxCheck: " + idSimDispenser);
 
-        return listSimDispenserMain.get(idSimDispenser).m_control.controlICCardPosiion(listSimDispenserMain.get(idSimDispenser));
+        return SimdispenserMain.m_control.controlICCardPosiion(listSimDispenserMain.get(idSimDispenser));
     }
 
     @ReactMethod
     public void readSerialSim(int idSimDispenser, Callback callback) {
         Log.d("DeviceModule", "readSeriSim: " + idSimDispenser);
 
-        HashMap<String, Object> readSeriSimResult = listSimDispenserMain.get(idSimDispenser).m_control.controlReadICCIDSim(listSimDispenserMain.get(idSimDispenser));
+        HashMap<String, Object> readSeriSimResult = SimdispenserMain.m_control.controlReadICCIDSim(listSimDispenserMain.get(idSimDispenser));
         if (readSeriSimResult != null) {
-            Log.d("Result Read SerialSim" ,String.valueOf(Helper.convertToJsonString(readSeriSimResult)));
+            Log.d("Result Read SerialSim" , Helper.convertToJsonString(readSeriSimResult));
             callback.invoke(null, Helper.convertToJsonString(readSeriSimResult));
         } else {
             callback.invoke("Read seri Sim not available.", null);
@@ -137,7 +170,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     public void retainCard(int idSimDispenser, Callback callback) {
         Log.d("DeviceModule", "retainCard: " + idSimDispenser);
 
-        boolean retainCard = listSimDispenserMain.get(idSimDispenser).m_control.controlRetainCard(listSimDispenserMain.get(idSimDispenser));
+        boolean retainCard = SimdispenserMain.m_control.controlRetainCard(listSimDispenserMain.get(idSimDispenser));
         callback.invoke(null, retainCard);
     }
 
@@ -145,14 +178,14 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     public boolean moveToFront(int idSimDispenser) {
         Log.d("DeviceModule", "moveToFront: " + idSimDispenser);
 
-        return listSimDispenserMain.get(idSimDispenser).m_control.controlClipPosiion(listSimDispenserMain.get(idSimDispenser));
+        return SimdispenserMain.m_control.controlClipPosiion(listSimDispenserMain.get(idSimDispenser));
     }
 
     @ReactMethod
     public boolean ejectCard() {
         Log.d("DeviceModule", "ejectCard: " + 0);
         int idSim = 0;
-        return listSimDispenserMain.get(idSim).m_control.controlResetAndEject(listSimDispenserMain.get(idSim));
+        return SimdispenserMain.m_control.controlRetainCard(listSimDispenserMain.get(idSim));
     }
 
     @ReactMethod
@@ -174,16 +207,22 @@ public class DeviceModule extends ReactContextBaseJavaModule {
 //        if (vendorId == null) vendorId = 4070;
 //        if (productId == null) productId = 33054;
         Map<String, String> total = new HashMap<>();
-        total.put("price","250,000VND" );
+        total.put("price","1.000.000 VND" );
         total.put("quantity", "5");
         total.put("serials", "1232131231233123213123"); // không sử dụng (để giai đoạn 2)
 
         List<Map<String, String>> commodityList = new ArrayList<>();
         Map<String, String> commodity = new HashMap<>();
-        commodity.put("description", "Sim description");
-        commodity.put("quantity", "50");
-        commodity.put("price", "500,000VND");
+        commodity.put("description", "Sim 4G (30 Day)");
+        commodity.put("quantity", "1");
+        commodity.put("price", "200.000 VND");
         commodityList.add(commodity);
+
+        Map<String, String> commodity2 = new HashMap<>();
+        commodity2.put("description", "Sim 4G (40 Day)");
+        commodity2.put("quantity", "1");
+        commodity2.put("price", "500.000 VND");
+        commodityList.add(commodity2);
 
         POSCustomed mPos = new POSCustomed();
         USBPrinting mUsb = new USBPrinting();
@@ -199,6 +238,42 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         return false;
     }
     @ReactMethod
+    public void Printest(){
+
+//        if (vendorId == null) vendorId = 4070;
+//        if (productId == null) productId = 33054;
+        Map<String, String> total = new HashMap<>();
+        total.put("price","1.000.000 VND" );
+        total.put("quantity", "5");
+        total.put("serials", "1232131231233123213123"); // không sử dụng (để giai đoạn 2)
+
+        List<Map<String, String>> commodityList = new ArrayList<>();
+        Map<String, String> commodity = new HashMap<>();
+        commodity.put("description", "Sim 4G (30 Day)");
+        commodity.put("quantity", "1");
+        commodity.put("price", "200.000 VND");
+        commodityList.add(commodity);
+
+        PrinterService printerService = new PrinterService();
+        //printerService.printReceiptService("haiba ", "123456",total,commodityList,"en",context);
+    }
+    @ReactMethod
+    public void TemperatureConnect(int portnum, Promise promise){
+        List<DeviceInfo> devices = SDKLocker.getAllUsbDevicesHasDriver(context);
+        for(int i = 0 ; i < devices.size(); i++){
+            Log.d("log port ",""+devices.get(i).port);
+            Log.d("log id ",""+devices.get(i).device.getDeviceId());
+        };
+        SDKTemperatureAndHumidity temperatureAndHumidity = new SDKTemperatureAndHumidity();
+       boolean status  =  temperatureAndHumidity.connect(context,7003,portnum,9600);
+       if(status)
+       {
+          double temp =  temperatureAndHumidity.getTempHumiData().temperature;
+           Log.d("temp ",""+temp);
+       }
+       promise.resolve(status);
+    }
+    @ReactMethod
     public String getTemperature()
     {
         StringBuilder result = new StringBuilder();
@@ -207,6 +282,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         TempHumiData temphuData = null;
 
         List<DeviceInfo> devices = SDKLocker.getAllUsbDevicesHasDriver(context);
+        Log.d("log all driver ",""+devices);
 //        List<DeviceInfo> devices = getUSBDeviceHasDriver();
         if(devices.size() == 0) {
             Log.d("Huhu","Không có thiết bị nào hết hic");
@@ -246,9 +322,11 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         Log.d("result tempe",result.toString());
         return result.toString();
     }
-    private List<DeviceInfo> getUSBDeviceHasDriver()
+    @ReactMethod
+    private List<DeviceInfo> getUSBDeviceHasDriver(int vitri)
     {
         UsbManager usbManager = (UsbManager)context.getSystemService(Context.USB_SERVICE);
+        Log.d("List USB",""+usbManager);
         UsbSerialProber usbDefaultProber = UsbSerialProber.getDefaultProber();
         UsbSerialProber usbCustomProber = CustomProber.getCustomProber();
         List<DeviceInfo> listItems = new ArrayList();
@@ -271,6 +349,14 @@ public class DeviceModule extends ReactContextBaseJavaModule {
                 }
             }
         }
+        Log.d("List USB",""+ listItems.get(vitri));
         return listItems;
+    }
+    private void DoiNoiGoiSim(String goisim)
+    {
+        //call api
+        //get status api =>
+        // if true => da sim ga
+        // false => eject the?
     }
 }

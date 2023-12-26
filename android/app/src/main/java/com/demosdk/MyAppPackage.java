@@ -1,4 +1,7 @@
 package com.demosdk;
+import com.demosdk.DeviceModule.Despenser;
+import com.demosdk.DeviceModule.Printer;
+import com.demosdk.Test.DeviceModule;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -23,6 +26,8 @@ public class MyAppPackage implements ReactPackage {
             @NotNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new DeviceModule(reactContext));
+        modules.add(new Despenser(reactContext));
+        modules.add(new Printer(reactContext));
         return modules;
     }
 
