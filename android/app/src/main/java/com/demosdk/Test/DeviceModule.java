@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.util.Log;
 import androidx.core.content.FileProvider;
 import asim.sdk.locker.SDKLocker;
+/*import asim.sdk.ups.SDKUPS;*/
 import com.demosdk.DefineState;
 import com.demosdk.Helper;
 import com.demosdk.Services.PrinterService;
@@ -75,7 +76,13 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         return (boolean) status.get("status");
     }
 
-
+/*    @ReactMethod
+    public void Ups(){
+        SDKUPS sdkups = new SDKUPS("/dev/ttyXR6",2400);
+        Log.d("status connec UPS",""+sdkups.portName);
+        boolean status = sdkups.connect();
+       // Log.d("status connec UPS",""+status);
+    }*/
 
     @ReactMethod
     public String getStatusUPS(){
@@ -287,18 +294,32 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         }
 
     }
-    public void Testinglocker(){
-        SDKLocker locker = new SDKLocker();
-        List<DeviceInfo> listItems =  locker.getAllUsbDeviceHasDriverByVendorIdProductIdAndDeviceId(context,6790,29987,1);
-
-        SDKTemperatureAndHumidity tempHuSDK = new SDKTemperatureAndHumidity();
-        boolean status = tempHuSDK.connect(context,1009,listItems.get(0).port,9600);
-        Log.d("status log connect ", " "+status);
-        if(status){
-            TempHumiData tem = tempHuSDK.getTempHumiData();
-            Log.d("nhiet do la  ", " "+tem.temperature);
+        @ReactMethod
+        public void openLocker(Promise promise)
+        {
+            SDKLocker locker = new SDKLocker();
+            int count = 0;
+            List<Integer> excludedDevices = new ArrayList<>();
+            excludedDevices.add(1009);
+            Log.d("==Locker Controller==", "Excluded devices = " + 1009);
+            Log.d("Starting to open lock: ", "............count = " + count);
+            promise.resolve( locker.openLockNewNew(context, 1, excludedDevices, 9600));
         }
-
+    @ReactMethod
+    public void closeLocker(Promise promise)
+    {
+        SDKLocker locker = new SDKLocker();
+        boolean clear = false;
+        int countClear = 0;
+        List<Integer> excludedDevices = new ArrayList<>();
+        excludedDevices.add(1009);
+        while(countClear < 5 && !clear) {
+            Log.d("ClearRelay", "Trying to clear relay ... countClear = " + countClear);
+            clear = locker.closeLockNewNew(context, excludedDevices, 9600);
+            Utils.sleep((long) 1);
+            countClear += 1;
+        }
+       promise.resolve(clear);
     }
     @ReactMethod
     public String getTemperature()

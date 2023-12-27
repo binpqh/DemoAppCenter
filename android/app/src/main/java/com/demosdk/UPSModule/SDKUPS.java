@@ -13,7 +13,7 @@ import java.util.List;
 public class SDKUPS {
     public Pos mPos = null;
     public COMIO mCom = null;
-    public String portName = "/ttyXR6";
+    public String portName = "/ttyS1";
     public int baudrate = 2400;
 
     public SDKUPS(String portName, int baudrate) {

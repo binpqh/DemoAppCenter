@@ -30,6 +30,11 @@ const fakeData = {
     { description: "Sim 2", quantity: "7", price: "300,000" },
   ],
 };
+//demo for get temperature
+const handleTest2 = async ()=> {
+  const tem = await DevicePeripherals.getTemperature();
+  console.log("nhiet do : ",tem);
+}
 
 //testing for printer
 // const handleTest = async ()=> {
@@ -47,11 +52,13 @@ const fakeData = {
 //   console.log("status warning : ",status);
 // };
 
-
+//đemo for dispenser
   // const handleGetStatus = () => {
   //   setResult('Get Status Sim Dispener' + DeviceModule.getStatus(1));
   //   DeviceModule.getStatusBoxCard(1);
   // };
+
+
   // const handleMoveCardToCheckBox = () => {
   //   DeviceModule.moveCardToBoxCheck(0);
   // };
@@ -110,9 +117,20 @@ const fakeData = {
 //       const status = await Despenser.outCard(1);
 //       console.log("status SIM : ",status);
 //   };
+
+
+
 const handleTest = async ()=> {
-  const tem = await DevicePeripherals.getTemperature();
-  console.log("nhiet do : ",tem);
+  const tem = await DeviceModule.openLocker();
+  console.log("locker : ",tem);
+}
+const handleTest1 = async ()=> {
+  const tem = await DeviceModule.closeLocker();
+  console.log("locker : ",tem);
+}
+const handleTest3 = async ()=> {
+   DeviceModule.getStatusUPS();
+  //console.log("Status UPS connect : ",tem);
 }
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -136,7 +154,23 @@ const handleTest = async ()=> {
           }}>
           <CustomButton
             onPress={handleTest}
-            title={'Testing Function'}
+            title={'Testing open lock'}
+            color={'Red'}
+          />
+          <CustomButton
+            onPress={handleTest1}
+
+            title={'Testing close lock'}
+            color={'Red'}
+          />
+          <CustomButton
+            onPress={handleTest2}
+            title={'Testing tem'}
+            color={'Red'}
+          />
+          <CustomButton
+            onPress={handleTest3}
+            title={'Testing UPS'}
             color={'Red'}
           />
 
