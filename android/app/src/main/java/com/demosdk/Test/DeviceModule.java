@@ -6,13 +6,15 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.util.Log;
+import android_serialport_api.SerialPort;
 import androidx.core.content.FileProvider;
 import asim.sdk.locker.SDKLocker;
 /*import asim.sdk.ups.SDKUPS;*/
+import asim.sdk.ups.SDKUPS;
 import com.demosdk.DefineState;
 import com.demosdk.Helper;
 import com.demosdk.Services.PrinterService;
-import com.demosdk.UPSModule.SDKUPS;
+//import com.demosdk.UPSModule.SDKUPS;
 import asim.sdk.common.Utils;
 import asim.sdk.locker.CustomProber;
 import asim.sdk.locker.DeviceInfo;
@@ -22,7 +24,7 @@ import asim.sdk.sdksimdispenser.SimdispenserMain;
 import asim.sdk.tempandhum.SDKTemperatureAndHumidity;
 import asim.sdk.tempandhum.TempHumiData;
 import asim.sdk.ups.UPSModel;
-import com.demosdk.UPSModule.SerialPortExample;
+//import com.demosdk.UPSModule.SerialPortExample;
 import com.facebook.react.bridge.*;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
@@ -61,12 +63,12 @@ public class DeviceModule extends ReactContextBaseJavaModule {
     public String getName() {
         return "DeviceModule";
     }
-    @ReactMethod
-    public void openUPS()
+    //@ReactMethod
+ /*   public void openUPS()
     {
         SerialPortExample x = new SerialPortExample();
         x.open();
-    }
+    }*/
 
     
     @ReactMethod()
@@ -76,15 +78,18 @@ public class DeviceModule extends ReactContextBaseJavaModule {
         return (boolean) status.get("status");
     }
 
-/*    @ReactMethod
+    @ReactMethod
     public void Ups(){
         SDKUPS sdkups = new SDKUPS("/dev/ttyXR6",2400);
-        Log.d("status connec UPS",""+sdkups.portName);
-        boolean status = sdkups.connect();
-       // Log.d("status connec UPS",""+status);
-    }*/
 
-    @ReactMethod
+        Log.d("status connec UPS",""+sdkups.portName);
+
+        Log.d("status connec UPS",""+sdkups.mPos.toString());
+        Log.d("status connec UPS",""+ sdkups.connect());
+        Log.d("status connec UPS",""+ sdkups.getInfo().toString());
+    }
+
+  /*  @ReactMethod
     public String getStatusUPS(){
         Log.d("UPS1","Step 0");
         SDKUPS sdkups = new SDKUPS("/dev/ttyXR6",2400);
@@ -100,7 +105,7 @@ public class DeviceModule extends ReactContextBaseJavaModule {
                 +" consumedLoad: "+upsData.consumedLoad + " "+upsData.frequencyOutput);
         return "totalInfo :"+upsData.totalInfo+" batteryVoltage :"+upsData.batteryVoltage+" inputVoltage :"+upsData.inputVoltage+" outputVoltage: "+upsData.outputVoltage
                 +" consumedLoad: "+upsData.consumedLoad + " "+upsData.frequencyOutput;
-    }
+    }*/
     @ReactMethod
     public void install(String path) {
         String cmd = "chmod 777 " + path;

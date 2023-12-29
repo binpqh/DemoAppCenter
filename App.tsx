@@ -37,20 +37,20 @@ const handleTest2 = async ()=> {
 }
 
 //testing for printer
-// const handleTest = async ()=> {
-//  const statusprint = await Printer.PrinterBill(
-//     fakeData.kioskId,
-//     fakeData.receiptNumber,
-//     fakeData.language,
-//     fakeData.hotline,
-//     fakeData.email,
-//     fakeData.total,
-//     fakeData.commodityList
-//   );
-//   console.log("status after printer : ",statusprint);
-//   const status = await Printer.StatusOutOfPaper();
-//   console.log("status warning : ",status);
-// };
+const handleTest4 = async ()=> {
+ const statusprint = await Printer.PrinterBill(
+    fakeData.kioskId,
+    fakeData.receiptNumber,
+    fakeData.language,
+    fakeData.hotline,
+    fakeData.email,
+    fakeData.total,
+    fakeData.commodityList
+  );
+  console.log("status after printer : ",statusprint);
+  const status = await Printer.StatusOutOfPaper();
+  console.log("status warning : ",status);
+};
 
 //đemo for dispenser
   // const handleGetStatus = () => {
@@ -121,12 +121,12 @@ const handleTest2 = async ()=> {
 
 
 const handleTest = async ()=> {
-  const tem = await DeviceModule.openLocker();
-  console.log("locker : ",tem);
+  const tem = await DevicePeripherals.getBatteryLevel();
+  console.log("battery level  : ",tem);
 }
 const handleTest1 = async ()=> {
-  const tem = await DeviceModule.closeLocker();
-  console.log("locker : ",tem);
+  const tem = await DevicePeripherals.getInfoUps();
+  console.log("info UPS  : ",tem);
 }
 const handleTest3 = async ()=> {
    DeviceModule.getStatusUPS();
@@ -154,22 +154,22 @@ const handleTest3 = async ()=> {
           }}>
           <CustomButton
             onPress={handleTest}
-            title={'Testing open lock'}
+            title={'Testing Battery Level'}
             color={'Red'}
           />
           <CustomButton
             onPress={handleTest1}
 
-            title={'Testing close lock'}
+            title={'Testing Info Ups'}
             color={'Red'}
           />
           <CustomButton
-            onPress={handleTest2}
+            onPress={handleTest4}
             title={'Testing tem'}
             color={'Red'}
           />
           <CustomButton
-            onPress={handleTest3}
+            onPress={handleTest1}
             title={'Testing UPS'}
             color={'Red'}
           />

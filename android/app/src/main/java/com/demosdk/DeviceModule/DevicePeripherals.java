@@ -1,8 +1,11 @@
 package com.demosdk.DeviceModule;
 
 import android.content.Context;
+import android.util.Log;
 import com.demosdk.Controls.LockerControl;
 import com.demosdk.Controls.TemperatureControl;
+import com.demosdk.Controls.UpsControl;
+import com.demosdk.Helper;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -13,6 +16,8 @@ public class DevicePeripherals extends ReactContextBaseJavaModule {
 
     TemperatureControl temperatureControl = new TemperatureControl();
     LockerControl lockerControl = new LockerControl();
+    UpsControl upsControl = new UpsControl();
+
     public final Context context;
     public DevicePeripherals(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -47,6 +52,21 @@ public class DevicePeripherals extends ReactContextBaseJavaModule {
         promise.resolve(lockerControl.closeLockerController(context));
     }
 
+    /**
+     *
+     * return battery Level Ups in Kiosk if return null connect false
+     */
+    @ReactMethod
+    public void getBatteryLevel(Promise promise){promise.resolve(upsControl.getBatteryLevelControl());}
+
+    /**
+     *
+     *return info Ups in Kiosk if return 0 connect false
+     */
+    @ReactMethod
+    public void getInfoUps(Promise promise){
+        promise.resolve(upsControl.getInfoUpsControl());
+    }
     @NotNull
     @Override
     public String getName() {
