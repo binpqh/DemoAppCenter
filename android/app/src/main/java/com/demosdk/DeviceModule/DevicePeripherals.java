@@ -61,11 +61,20 @@ public class DevicePeripherals extends ReactContextBaseJavaModule {
 
     /**
      *
-     *return info Ups in Kiosk if return 0 connect false
+     * return (json) info Ups in Kiosk if return 0 connect false
+     * //example return :
+     * {"batteryLevel":0.0,
+     * "batteryVoltage":27.1,
+     * "consumedLoad":7.0,
+     * "frequencyOutput":49.8,
+     * "inputVoltage":219.8,
+     * "outputVoltage":219.7,
+     * "totalInfo":"(219.8 231.9 191.3 220.3 219.7 007 007 49.8 365 369 027.1 --.- M"}
+     *  // end example return
      */
     @ReactMethod
     public void getInfoUps(Promise promise){
-        promise.resolve(upsControl.getInfoUpsControl());
+        promise.resolve(Helper.convertUPSModelToJson(upsControl.getInfoUpsControl()));
     }
     @NotNull
     @Override

@@ -8,12 +8,11 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import com.google.gson.Gson;
 public class Helper {
     public static String convertToJsonString(HashMap<String, Object> hashMapObject) {
         try {
@@ -49,7 +48,12 @@ public class Helper {
         SDKLocker locker = new SDKLocker();
         return locker.getAllUsbDeviceHasDriverByVendorIdProductIdAndDeviceId(context,VendorId,ProductId,DeviceId);
     }
-    public static String toString(UPSModel upsModel) {
-       return upsModel.toString();
+    public static String convertUPSModelToJson(UPSModel upsModel) {
+        if (upsModel == null) {
+            return null;
+        }
+
+        Gson gson = new Gson();
+        return gson.toJson(upsModel);
     }
 }
